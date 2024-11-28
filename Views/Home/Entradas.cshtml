@@ -1,0 +1,70 @@
+﻿@model dynamic
+<div>
+    <div>
+        <div class="ct-head">
+            <h1 class="title">Lançamentos</h1>
+        </div>
+        <div class="ct-filters">
+            <button class="btn-new"><a asp-controller="Home" asp-action="Index">+ Lançamento</a></button>
+            <input type="text" placeholder="Pes. por código de barras" class="in-search" id="search"/>
+        </div>
+    </div>
+
+    <div>
+        <table class="table table-striped" id="dataTable">
+            <thead>
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Data / Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (dynamic Code in Model.Codes)
+                {
+                    <tr>
+                        @if (Code.CodeBar.Length > 14)
+                        {
+                            <th scope="row">@Code.CodeBar.Substring(0,15) ...</th>
+                        }else{
+                            <th scope="row">@Code.CodeBar</th>
+                        }                   
+                        <td>@Code.Date</td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('search').addEventListener('keyup', function () {
+            var input = document.getElementById('search');
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById('dataTable');
+            var tr = table.getElementsByTagName('tr');
+
+            for (var i = 1; i < tr.length; i++) { // Começa em 1 para ignorar o cabeçalho
+                var thArray = tr[i].getElementsByTagName('th');
+                var rowContainsFilter = false;
+
+                for (var j = 0; j < thArray.length; j++) {
+                    var cell = thArray[j];
+                    if (cell) {
+                        if (cell.innerHTML.toLowerCase().indexOf(filter) > -1) {
+                            rowContainsFilter = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (rowContainsFilter) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,57 @@
+﻿<div>
+    <div class="cont-cent">
+        
+        <form onsubmit="InsertCode(this); return false;">
+            <label id="photosLabel" for="photos" class="bt-camera">
+                <ion-icon name="camera" class="i-branco"></ion-icon>
+            </label>
+            <input type="file" class="dsp-n" name="photos" id="photos" multiple="multiple" accept="image/*">            
+            <div class="cont-cent">
+                <button class="bt-sub" type="submit">Enviar</button>
+            </div>
+        </form>
+        <p class="text-bt">Clique no botão acima para realizar a leitura do código de barras, em seguida no botão de enviar.</p>
+    </div>
+    
+</div>
+@section Scripts {
+    <script>
+        function InsertCode(form) {
+            debugger;
+            var formData = new FormData(form);
+
+            var files = $('#photos')[0].files;
+            if (files.length == 0) {
+                alert("Erro", "Adicione pelo menos uma foto");
+                return;
+            }
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append('photos[]', files[i]);
+            }
+
+            $.ajax({
+                url: `/Post`,
+                enctype: "multipart/form-data",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 600000,
+                success: function (data) {
+                    closeLoading();
+                    alert("Sucesso!", "Veículo adicionado com sucesso", "success");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Erro");
+                }
+            })
+
+        }
+    </script>
+}
